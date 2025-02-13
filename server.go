@@ -6,6 +6,7 @@ package websocket
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -224,6 +225,7 @@ func (u *Upgrader) Upgrade(w http.ResponseWriter, r *http.Request, responseHeade
 		p = c.writeBuf
 	}
 	p = p[:0]
+	fmt.Println("Writing connection upgrade headers")
 
 	p = append(p, "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "...)
 	p = append(p, computeAcceptKey(challengeKey)...)
@@ -270,11 +272,13 @@ func (u *Upgrader) Upgrade(w http.ResponseWriter, r *http.Request, responseHeade
 	if _, err = netConn.Write(p); err != nil {
 		return nil, err
 	}
+
 	if u.HandshakeTimeout > 0 {
 		if err := netConn.SetWriteDeadline(time.Time{}); err != nil {
 			return nil, err
 		}
 	}
+	fmt.Println("Wrote connection upgrade headers")
 
 	// Success! Set netConn to nil to stop the deferred function above from
 	// closing the network connection.
@@ -370,4 +374,3 @@ func (b *brNetConn) Read(p []byte) (n int, err error) {
 func (b *brNetConn) NetConn() net.Conn {
 	return b.Conn
 }
-
