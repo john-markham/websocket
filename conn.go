@@ -9,6 +9,7 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"strconv"
@@ -974,6 +975,7 @@ func (c *Conn) advanceFrame() (int, error) {
 			}
 			closeText = string(payload[2:])
 			if !utf8.ValidString(closeText) {
+				fmt.Println("invalid utf8 payload in close frame", closeText)
 				return noFrame, c.handleProtocolError("invalid utf8 payload in close frame")
 			}
 		}
