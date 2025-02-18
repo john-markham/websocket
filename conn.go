@@ -980,6 +980,7 @@ func (c *Conn) advanceFrame() (int, error) {
 			}
 		}
 		if err := c.handleClose(closeCode, closeText); err != nil {
+			fmt.Println("error in handleClose", err)
 			return noFrame, err
 		}
 		return noFrame, &CloseError{Code: closeCode, Text: closeText}
